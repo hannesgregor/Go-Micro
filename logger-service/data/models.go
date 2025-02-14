@@ -16,8 +16,8 @@ var client *mongo.Client
 func New(mongo *mongo.Client) Models {
 	client = mongo
 
-	return Models {
-		LogEntry : LogEntry{},
+	return Models{
+		LogEntry: LogEntry{},
 	}
 }
 
@@ -26,21 +26,21 @@ type Models struct {
 }
 
 type LogEntry struct {
-	ID string `bson:"_id,omitempty" json:"id,omitempty"`
-	Name string `bson:"name" json:"name"`
-	Data string `bson:"data" json:"data"`
-	CreatedAt time.Time `bson:"created_at" json:"created_at"` 
-	UpdateddAt time.Time `bson:"updated_at" json:"updated_at"` 
+	ID        string    `bson:"_id,omitempty" json:"id,omitempty"`
+	Name      string    `bson:"name" json:"name"`
+	Data      string    `bson:"data" json:"data"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }
 
 func (l *LogEntry) Insert(entry LogEntry) error {
 	collection := client.Database("logs").Collection("logs")
 
 	_, err := collection.InsertOne(context.TODO(), LogEntry{
-		Name: entry.Name,
-		Data: entry.Data,
+		Name:      entry.Name,
+		Data:      entry.Data,
 		CreatedAt: time.Now(),
-		UpdateddAt: time.Now(),
+		UpdatedAt: time.Now(),
 	})
 	if err != nil {
 		log.Println("Error inserting into logs:", err)
@@ -83,7 +83,7 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 	return logs, nil
 }
 
-func (l *LogEntry) GetOne (id string) (*LogEntry, error) {
+func (l *LogEntry) GetOne(id string) (*LogEntry, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
@@ -132,8 +132,8 @@ func (l *LogEntry) Update() (*mongo.UpdateResult, error) {
 		bson.M{"_id": docID},
 		bson.D{
 			{"$set", bson.D{
-				{"name", l.name},
-				{"data", l.data},
+				{"name", l.Name},
+				{"data", l.Data},
 				{"updated_at", time.Now()},
 			}},
 		},
